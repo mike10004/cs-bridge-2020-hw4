@@ -20,18 +20,35 @@ and so on, and including corresponding expected outputs `expected-output1.txt`, 
 ## Commands
 
 The `build.sh` and `clean.sh` scripts do what they sound like they do.
+To run `build.sh`, `cmake` must be on your path. If you only have 
+`cmake` through your CLion installation, then you should symlink
+`$CLION_INSTALL_DIR/bin/cmake/linux/bin/cmake` to a location on your
+path.
 
-When you execute `check.sh`, for each executable, the executable is launched,
-each line from `input.txt` is copied to the process standard input 
-stream, and the output is checked against `expected-output.txt`.
+The program `check.py` runs the build script and then runs tests cases
+for each executable. It uses `screen` to capture input and output that 
+would be seen in an interactive terminal. Test cases are corresponding
+pairs of files named `input*.txt` and `expected-output*.txt` in the 
+question subdirectory (or anywhere beneath it). Execute 
 
-This happens inside a `screen` session so that the input text is echoed to
-the output, as would happen in a tty.
+    $ ./check.py --help
+
+to see options for running the test cases. For example, you can execute
+
+    $ ./check.py q3 
+
+to run only the `q3` test cases. Test cases are run in parallel, but you 
+can control that with the `--threads` option.
 
 The `prepare.sh` command is executed when you're done writing all the code and
 need the filenames to satisfy the instructors' convention. Each `main.cpp` file
 is copied to the `stage` directory with a name of the form `${PREFIX}qN.cpp`,
-where `${PREFIX}` is the argument you supply to the script. 
+where `${PREFIX}` is the argument you supply to the script. For example, 
+
+    $ ./prepare.sh abc123_hw3_
+
+would copy your `q1/main.cpp` to `abc123_hw3_q1.cpp` and likewise for the
+other `main.cpp` files in subdirectories.
 
 ## License
 
