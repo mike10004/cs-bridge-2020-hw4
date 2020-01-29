@@ -43,6 +43,11 @@ Cost of call: {cents // 100} dollars and {cents % 100} cents
     print(f"{in_filename} and {ex_filename} written")
 
 
+def _read_file_text(pathname) -> str:
+    with open(pathname, 'r') as ifile:
+        return ifile.read()
+
+
 class ParameterSource(NamedTuple):
     
     input_text_template: str
@@ -65,16 +70,28 @@ class ParameterSource(NamedTuple):
         return self.expected_text_template.format(**test_case)
     
     @staticmethod
-    def load(model: Dict) -> 'ParameterSource':
+    def load(model: Dict, root_dir: str) -> 'ParameterSource':
         test_cases = []
-        try:
+        input_text_template = None
+        if 'input' in model:
             input_text_template = model['input']
-        except KeyError:
-            raise ValueError("model does not define 'input'")
-        try:
+        elif 'input_file' in model:
+            path = model['input_file']
+            if not os.path.isabs(path):
+                path = os.path.join(root_dir, path)
+            input_text_template = _read_file_text(path)
+        if input_text_template is None:
+            raise ValueError("model must define 'input' or 'input_file'")
+        expected_text_template = None
+        if 'expected' in model:
             expected_text_template = model['expected']
-        except KeyError:
-            raise ValueError("model does not define 'expected'")
+        elif 'expected_file' in model:
+            path = model['expected_file']
+            if not os.path.isabs(path):
+                path = os.path.join(root_dir, path)
+            expected_text_template = _read_file_text(path)
+        if expected_text_template is None:
+            raise ValueError("model must define 'expected' or 'expected_file'")
         try:
             param_names = None
             for test_case in model['test_cases']:
@@ -150,7 +167,7 @@ def main():
         try:
             with open(defs_file, 'r') as ifile:
                 model = json.load(ifile)
-            param_source = ParameterSource.load(model)
+            param_source = ParameterSource.load(model, os.path.dirname(defs_file))
             dest_dir = os.path.join(os.path.dirname(defs_file), args.dest_dirname)
             write_cases(param_source, dest_dir)
             nsuccesses += 1
