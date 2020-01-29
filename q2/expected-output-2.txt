@@ -1,3 +1,0 @@
-Enter an integer: 99
-Enter another integer: 5
-104
