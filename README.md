@@ -19,17 +19,35 @@ and so on, and including corresponding expected outputs `expected-output1.txt`, 
 
 ## Commands
 
+### Build
+
 The `build.sh` and `clean.sh` scripts do what they sound like they do.
-To run `build.sh`, `cmake` must be on your path. If you only have 
-`cmake` through your CLion installation, then you should symlink
+
+To run `build.sh`, your system must have `make` and `cmake` available.
+If they are not available on the path, use environment variables `MAKE`
+and `CMAKE` to define their absolute pathnames. 
+
+For example, if you have `cmake` from a CLion installation, then execute
+
+    $ export CMAKE=$PATH_TO_CLION/bin/cmake/linux/bin/cmake
+
 `$CLION_INSTALL_DIR/bin/cmake/linux/bin/cmake` to a location on your
 path.
 
+On Linux, you can install `make` with `sudo apt install build-essentials`.
+
+### Check
+
 The program `check.py` runs the build script and then runs tests cases
-for each executable. It uses `screen` to capture input and output that 
-would be seen in an interactive terminal. Test cases are corresponding
-pairs of files named `input*.txt` and `expected-output*.txt` in the 
-question subdirectory (or anywhere beneath it). Execute 
+for each executable. (The build script depends on `cmake` and `make`; 
+see note above.)
+
+The check program uses `screen` to capture input and output that would be seen 
+in an interactive terminal. Test cases are defined by corresponding pairs of 
+files named `input*.txt` and `expected-output*.txt` in the question 
+subdirectory (or anywhere beneath it). 
+
+Execute 
 
     $ ./check.py --help
 
@@ -39,6 +57,20 @@ to see options for running the test cases. For example, you can execute
 
 to run only the `q3` test cases. Test cases are run in parallel, but you 
 can control that with the `--threads` option.
+
+### Generate Test Cases
+
+Create a test cases definitions file named `test-cases.json` in a question 
+subdirectory, following the example in `q2/test-cases.json`. Execute
+
+    $ ./make_test_cases.py [SUBDIR]
+
+to generate input files and expected output files for each subdirectory that
+contains a test cases definitions file. Specifying `SUBDIR` is optional, and 
+causes the program to generate test cases only for the definitions file in 
+the specified subdirectory. 
+
+### Prepare
 
 The `prepare.sh` command is executed when you're done writing all the code and
 need the filenames to satisfy the instructors' convention. Each `main.cpp` file
