@@ -1,0 +1,3 @@
+Enter an integer: 8
+Enter another integer: 0
+8

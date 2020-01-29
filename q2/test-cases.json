@@ -1,0 +1,22 @@
+{
+  "_COMMENT1": "Use a file of this form to define test cases",
+
+  "_COMMENT2": "Define input text and expected output text as strings, or define input_file and expected_file as paths relative to this file's parent, and text will be read from them",
+  "input": "{a}\n{b}\n",
+  "expected_file": "expected-template.txt",
+
+  "_COMMENT3": "test cases can be defined as dicts or arrays; if an array is used, then param_names must also be defined",
+  "param_names": ["a", "b", "c"],
+  "test_cases": [
+    {
+      "a": 2,
+      "b": 3,
+      "c": 5
+    },
+    [100, 50, 150],
+    [-6, -3, -9],
+    [-4, 4, 0],
+    [-1, 3, 2],
+    [8, 0, 8]
+  ]
+}
