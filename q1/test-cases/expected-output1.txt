@@ -1,0 +1,9 @@
+Please enter a positive integer: 3
+section a
+2
+4
+6
+section b
+2
+4
+6

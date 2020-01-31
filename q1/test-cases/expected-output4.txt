@@ -1,0 +1,11 @@
+Please enter a positive integer: 4
+section a
+2
+4
+6
+8
+section b
+2
+4
+6
+8

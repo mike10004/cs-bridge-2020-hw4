@@ -1,0 +1,5 @@
+Please enter a positive integer: 1
+section a
+2
+section b
+2

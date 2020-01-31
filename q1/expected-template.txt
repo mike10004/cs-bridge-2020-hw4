@@ -1,0 +1,5 @@
+Please enter a positive integer: {a}
+section a
+{output}
+section b
+{output}
