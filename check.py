@@ -59,7 +59,10 @@ def detect_test_case_files(q_dir: str) -> List[Tuple[Optional[str], str]]:
                 expected_file = os.path.join(root, "expected-output" + f[5:])
                 test_cases.append((input_file, expected_file))
     if not test_cases:
-        return [(None, os.path.join(q_dir, 'expected-output.txt'))]
+        expected_file = os.path.join(q_dir, 'expected-output.txt')
+        if os.path.isfile(expected_file):
+            return [(None, expected_file)]
+        return []
     return sorted(test_cases)
 
 
@@ -156,17 +159,34 @@ class ConcurrencyManager(object):
             self.outcomes_lock.release()
 
 
-def report(outcomes: List[TestCaseOutcome], ofile=sys.stderr):
+def report(outcomes: List[TestCaseOutcome], report_type: str, ofile=sys.stderr):
     for outcome in outcomes:
         q_name = os.path.basename(outcome.executable)
         input_name = os.path.basename(outcome.input_file)
         print(f"{q_name}: {input_name}: {outcome.message}")
         if outcome.message == 'diff':
-            expected = outcome.expected_text.split("\n")
-            actual = outcome.actual_text.split("\n")
-            delta = difflib.context_diff(expected, actual)
-            for line in delta:
-                print(line, file=ofile)
+            if report_type == 'diff':
+                expected = outcome.expected_text.split("\n")
+                actual = outcome.actual_text.split("\n")
+                delta = difflib.context_diff(expected, actual)
+                for line in delta:
+                    print(line, file=ofile)
+            elif report_type == 'full':
+                print("=================================================", file=ofile)
+                print("EXPECTED", file=ofile)
+                print("=================================================", file=ofile)
+                print(outcome.expected_text, end="", file=ofile)
+                print("=================================================", file=ofile)
+                print("=================================================", file=ofile)
+                print("ACTUAL", file=ofile)
+                print("=================================================", file=ofile)
+                print(outcome.actual_text, end="", file=ofile)
+                print("=================================================", file=ofile)
+            elif report_type == 'repr':
+                print("expected: {}".format(repr(outcome.expected_text)), file=ofile)
+                print("  actual: {}".format(repr(outcome.actual_text)), file=ofile)
+            else:
+                _log.debug("test case failure reported with message=diff but diff_action=%s", report_type)
 
 
 def matches(filter_pattern: Optional[str], test_case: Tuple[Optional[str], str]):
@@ -176,13 +196,15 @@ def matches(filter_pattern: Optional[str], test_case: Tuple[Optional[str], str])
     return fnmatch.fnmatch(filename, filter_pattern)
 
 
-def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_test_cases:int, log_input, filter_pattern):
+def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_test_cases:int, log_input: bool, filter_pattern: str, report_type: str):
     q_dir = os.path.dirname(cpp_file)
     q_name = os.path.basename(q_dir)
     q_executable = os.path.join(q_dir, 'cmake-build', q_name)
     assert os.path.isfile(q_executable), "not found: " + q_executable
     test_case_files = detect_test_case_files(q_dir)
     _log.info("%s: detected %s test cases", q_name, len(test_case_files))
+    if not test_case_files:
+        return
     runner = TestCaseRunner(q_executable, pause_duration, log_input)
     outcomes = {}
     threads: List[threading.Thread] = []
@@ -203,7 +225,7 @@ def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_
         _log.warning("all test cases were skipped")
     failures = [outcome for outcome in outcomes.values() if not outcome.passed]
     _log.info("%s: %s failures among %s test cases", q_name, len(failures), len(outcomes))
-    report(failures)
+    report(failures, report_type)
 
 
 def main():
@@ -215,6 +237,7 @@ def main():
     parser.add_argument("-j", "-t", "--threads", type=int, default=4, metavar="N", help="concurrency level for test cases")
     parser.add_argument("--log-input", help="log feeding of input lines at DEBUG level")
     parser.add_argument("--filter", metavar="PATTERN", help="match test case input filenames against PATTERN")
+    parser.add_argument("--report", metavar="ACTION", choices=('diff', 'full', 'repr', 'none'), default='diff', help="what to print on test case failure")
     args = parser.parse_args()
     logging.basicConfig(level=logging.__dict__[args.log_level])
     this_file = os.path.abspath(__file__)
@@ -239,7 +262,7 @@ def main():
         _log.error("no main.cpp files found")
         return 1
     for i, cpp_file in enumerate(sorted(main_cpps)):
-        check_cpp(cpp_file, args.threads, args.pause, args.max_cases, args.log_input, args.filter)
+        check_cpp(cpp_file, args.threads, args.pause, args.max_cases, args.log_input, args.filter, args.report)
     return 0
 
 
