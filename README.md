@@ -3,8 +3,8 @@
 This repository is a template for projects that contain solutions to homework 
 assignments for NYU Tandon CS Bridge Winter 2020.
 
-To use this template, fork the repository and perform the following 
-modifications:
+To use this template, clone, fork, or otherwise duplicate the repository and 
+perform the following modifications:
 
 1. change this readme to reflect that this is an assignment, not the template
 2. modify `question.md`, `input.txt`, and `expected-output.txt` as appropriate 
@@ -16,6 +16,15 @@ modifications:
 
 You can have multiple test cases by naming your input files `input1.txt`, `input2.txt`,
 and so on, and including corresponding expected outputs `expected-output1.txt`, etc.
+
+## Clone or duplicate?
+
+Which one to do here depends on how you want to use your working copy. If you only 
+plan to keep the local copy, then just clone the repo and create a new branch for 
+the new homework assignment. If you want to push your work to a remote repository, 
+then it's probably best to [duplicate](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository), 
+meaning you create a new repository in your GitHub account, clone the repo, and 
+mirror-push to your new repo. Then you clone the new repo.
 
 ## Commands
 
@@ -81,25 +90,3 @@ where `${PREFIX}` is the argument you supply to the script. For example,
 
 would copy your `q1/main.cpp` to `abc123_hw3_q1.cpp` and likewise for the
 other `main.cpp` files in subdirectories.
-
-## License
-
-Copyright (c) 2019 Mike Chaberski
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
-OR OTHER DEALINGS IN THE SOFTWARE.
