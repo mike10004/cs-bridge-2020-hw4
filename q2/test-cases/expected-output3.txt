@@ -1,3 +1,0 @@
-Enter an integer: -6
-Enter another integer: -3
--9

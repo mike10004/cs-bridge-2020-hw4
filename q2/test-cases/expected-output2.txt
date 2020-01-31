@@ -1,3 +1,0 @@
-Enter an integer: 100
-Enter another integer: 50
-150

@@ -1,3 +1,0 @@
-Enter an integer: 2
-Enter another integer: 3
-5
