@@ -1,18 +1,14 @@
 section a
 
-Please enter the length of the sequence: 3
+Please enter the length of the sequence: {length}
 Please enter your sequence:
-1
-2
-3
-The geometric mean is: 1.8171
+{numbers}
+The geometric mean is: {gmean}
 
 section b
 
 Please enter a non-empty sequence of positive integers, each one in a 
 separate line. End your sequence by typing -1:
-1
-2
-3
+{numbers}
 -1
-The geometric mean is: 1.8171
+The geometric mean is: {gmean}
