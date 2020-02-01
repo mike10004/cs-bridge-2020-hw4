@@ -45,10 +45,10 @@ _MAINCPP_TEMPLATE = """\
 using namespace std;
 
 int main()
-{
+{{
     cout << "{q_name} executed" << endl;
     return 0;
-}
+}}
 """
 
 def detect_next_qname(proj_dir):
