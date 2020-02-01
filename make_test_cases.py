@@ -24,25 +24,6 @@ def to_pathname(filename, disable_mkdir=False):
     return pathname
 
 
-def write_case(case_id: int, case):
-    case_id = f"{case_id:02d}"
-    day, time, duration, cents = case
-    intext = f"{day}\n{time}\n{duration}\n"
-    in_filename = f"input{case_id}.txt"
-    with open(to_pathname(in_filename), 'w') as ofile:
-        ofile.write(intext)
-    extext = f"""\
-Enter day of week call was started: {day}
-Enter time of day call was started (24-hour format): {time}
-Enter length of call in minutes: {duration}
-Cost of call: {cents // 100} dollars and {cents % 100} cents
-"""
-    ex_filename = f"expected-output{case_id}.txt"
-    with open(to_pathname(ex_filename), 'w') as ofile:
-        ofile.write(extext)
-    print(f"{in_filename} and {ex_filename} written")
-
-
 def _read_file_text(pathname) -> str:
     with open(pathname, 'r') as ifile:
         return ifile.read()
@@ -156,29 +137,26 @@ def find_all_definitions_files(top_dir: str, filename: str) -> List[str]:
     return defs_files
 
 
-def main():
-    parser = ArgumentParser()
-    parser.add_argument("subdirs", nargs='*', metavar="DIR", help="subdirectory containing test case definitions file")
-    parser.add_argument("--definitions-filename", metavar="BASENAME", default=_DEFAULT_DEFINITIONS_FILENAME, help="filename of the file (within a subdirectory) that contains test case definitions")
-    parser.add_argument("--dest-dirname", default="test-cases", metavar="BASENAME", help="destination directory name (relative to definitions file location)")
-    parser.add_argument("-l", "--log-level", default="INFO", metavar="LEVEL", choices=('DEBUG', 'WARN', 'ERROR', 'INFO'))
-    args = parser.parse_args()
-    logging.basicConfig(level=logging.__dict__[args.log_level.upper()])
+def produce_from_defs(defs_file: str, dest_dirname: str = 'test-cases') -> ParameterSource:
+    with open(defs_file, 'r') as ifile:
+        model = json.load(ifile)
+    param_source = ParameterSource.load(model, os.path.dirname(defs_file))
+    dest_dir = os.path.join(os.path.dirname(defs_file), dest_dirname)
+    write_cases(param_source, dest_dir)
+    return param_source
+
+
+def produce_files(subdirs: Optional[List[str]], definitions_filename: str, dest_dirname: str):
     proj_dir = os.path.dirname(os.path.abspath(__file__))
-    if not args.subdirs:
-        defs_files = find_all_definitions_files(proj_dir, args.definitions_filename)
-        args.subdirs = list(map(os.path.dirname, defs_files))
+    if not subdirs:
+        defs_files = find_all_definitions_files(proj_dir, definitions_filename)
     else:
-        defs_files = map(lambda d: os.path.join(d, args.definitions_filename), args.subdirs)
+        defs_files = map(lambda d: os.path.join(d, definitions_filename), subdirs)
         defs_files = list(filter(os.path.exists, defs_files))
     nsuccesses = 0
     for defs_file in defs_files:
         try:
-            with open(defs_file, 'r') as ifile:
-                model = json.load(ifile)
-            param_source = ParameterSource.load(model, os.path.dirname(defs_file))
-            dest_dir = os.path.join(os.path.dirname(defs_file), args.dest_dirname)
-            write_cases(param_source, dest_dir)
+            produce_from_defs(defs_file, dest_dirname)
             nsuccesses += 1
         except Exception:
             exc_info = sys.exc_info()
@@ -186,10 +164,21 @@ def main():
             _log.debug("exception info:\n%s", "".join(info).strip())
             e = exc_info[1]
             _log.warning("failure to load model and write cases from %s: %s, %s", defs_file, type(e), e)
-            continue
     _log.debug("test cases generated from %s of %s definitions files", nsuccesses, len(defs_files))
     if nsuccesses == 0:
-        _log.error("test case generation did not succeed for any of %s definitions file", len(defs_files))
+        _log.error("test case generation did not succeed for any of %s definitions files", len(defs_files))
+    return nsuccesses
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("subdirs", nargs='*', metavar="DIR", help="subdirectory containing 'test-cases.json` file")
+    parser.add_argument("--definitions-filename", metavar="BASENAME", default=_DEFAULT_DEFINITIONS_FILENAME, help="test cases definitions filename to search for, if not 'test-cases.json'")
+    parser.add_argument("--dest-dirname", default="test-cases", metavar="BASENAME", help="destination directory name (relative to definitions file location)")
+    parser.add_argument("-l", "--log-level", default="INFO", metavar="LEVEL", choices=('DEBUG', 'WARN', 'ERROR', 'INFO'))
+    args = parser.parse_args()
+    logging.basicConfig(level=logging.__dict__[args.log_level.upper()])
+    nsuccesses = produce_files(args.subdirs, args.definitions_filename, args.dest_dirname)
     return 0 if nsuccesses > 0 else 2
 
 

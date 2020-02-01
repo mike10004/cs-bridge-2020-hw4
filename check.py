@@ -15,8 +15,9 @@ import uuid
 import tempfile
 import os.path
 import subprocess
-from subprocess import PIPE, DEVNULL
 import time
+import make_test_cases
+from subprocess import PIPE, DEVNULL
 from argparse import ArgumentParser
 from typing import List, Tuple, Optional, NamedTuple
 
@@ -129,6 +130,7 @@ class TestCaseRunner(object):
                         _log.debug(msg)
                         return outcome(False, read_file_text(screenlog, True), msg)
                 completed = True
+                # TODO: reattach to session and wait for termination (with a timeout)
             finally:
                 self._pause()  ## allow process to exit cleanly
                 exitcode = subprocess.call(['screen', '-S', case_id, '-X', 'quit'], stdout=DEVNULL, stderr=DEVNULL)  # ok if failed; probably already terminated
@@ -247,6 +249,7 @@ def main():
     parser.add_argument("--filter", metavar="PATTERN", help="match test case input filenames against PATTERN")
     parser.add_argument("--report", metavar="ACTION", choices=('diff', 'full', 'repr', 'none'), default='diff', help="what to print on test case failure")
     parser.add_argument("--stuff", metavar="MODE", choices=('auto', 'strict'), default='auto', help="how to interpret input lines sent to process via `screen -X stuff`: 'auto' or 'strict'")
+    parser.add_argument("--test-cases", metavar="MODE", choices=('auto', 'require', 'existing'), help="test case generation mode; 'auto' means attempt to re-generate")
     args = parser.parse_args()
     logging.basicConfig(level=logging.__dict__[args.log_level])
     this_file = os.path.abspath(__file__)
@@ -271,6 +274,13 @@ def main():
         _log.error("no main.cpp files found")
         return 1
     for i, cpp_file in enumerate(sorted(main_cpps)):
+        if args.test_cases != 'existing':
+            defs_file = os.path.join(os.path.dirname(cpp_file), 'test-cases.json')
+            if not os.path.isfile(defs_file):
+                if args.test_cases == 'require':
+                    raise FileNotFoundError(defs_file)
+            else:
+                make_test_cases.produce_from_defs(defs_file)
         check_cpp(cpp_file, args.threads, args.pause, args.max_cases, args.log_input, args.filter, args.report, args.stuff)
     return 0
 
