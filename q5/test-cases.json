@@ -1,0 +1,11 @@
+{
+  "input": "{n}\n",
+  "expected": "Enter a positive integer: {n}\n{hourglass}\n",
+  "param_names": ["n", "hourglass"],
+  "test_cases": [
+    [1, "*\n*"],
+    [2, "***\n *\n *\n***"],
+    [3, "*****\n ***\n *\n *\n ***\n *****"],
+    [4, "*******\n *****\n  ***\n   *\n   *\n  ***\n *****\n*******"]
+  ]
+}
