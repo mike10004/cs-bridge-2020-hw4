@@ -3,3 +3,4 @@ project(hw)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/q1" "${PROJECT_SOURCE_DIR}/q1/cmake-build")
 
+add_subdirectory("${PROJECT_SOURCE_DIR}/q2" "${PROJECT_SOURCE_DIR}/q2/cmake-build")
