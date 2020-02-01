@@ -24,7 +24,7 @@ these 2 rules:
 For example: IIII, XVII and MMMMMMDCCLXXXXVII are legal numbers in our simplified Roman
 numeral system, but IIIII, XIV, VVI and CCXLIII are not.
 
-Write a program that reads from the user a (decimal) number, and prints it’s representation in
+Write a program that reads from the user a (decimal) number, and prints its representation in
 the simplified Roman numerals system.
 
 Your program should interact with the user exactly as it shows in the following example:

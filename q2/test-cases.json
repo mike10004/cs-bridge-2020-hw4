@@ -1,11 +1,14 @@
 {
-  "input": "{nombre}\n",
-  "input_file": "input-template.txt",
-  "expected": "Enter your name: {nombre}\nhello, {nombre}\n",
-  "expected_file": "expected-template.txt",
-  "param_names": ["nombre"],
+  "input": "{decimal}",
+  "expected": "Enter decimal number:\n{decimal}\n{decimal} is {roman}\n",
+  "param_names": ["decimal", "roman"],
   "test_cases": [
-    "jane",
-    "julia"
+    [147, "CXXXXVII"],
+    [1, "I"],
+    [5, "V"],
+    [4, "IIII"],
+    [17, "XVII"],
+    [256, "CCLVI"],
+    [6797, "MMMMMMDCCLXXXXVII"]
   ]
 }
