@@ -234,7 +234,10 @@ def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_
     if not threads:
         _log.warning("all test cases were skipped")
     failures = [outcome for outcome in outcomes.values() if not outcome.passed]
-    _log.info("%s: %s failures among %s test cases", q_name, len(failures), len(outcomes))
+    if failures:
+        _log.info("%s: %s failures among %s test cases", q_name, len(failures), len(outcomes))
+    elif len(outcomes) > 0:
+        _log.info("%s: all %s tests pass", q_name, len(outcomes))
     report(failures, report_type)
 
 
