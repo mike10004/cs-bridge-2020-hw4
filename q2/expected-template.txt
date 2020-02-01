@@ -1,3 +1,0 @@
-Enter an integer: {a}
-Enter another integer: {b}
-{c}
