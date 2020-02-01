@@ -78,13 +78,19 @@ class TestCaseOutcome(NamedTuple):
 
 class TestCaseRunner(object):
 
-    def __init__(self, executable, pause_duration=_DEFAULT_PAUSE_DURATION_SECONDS, log_input=False):
+    def __init__(self, executable, pause_duration=_DEFAULT_PAUSE_DURATION_SECONDS, log_input=False, stuff_mode='auto'):
         self.executable = executable
         self.pause_duration = pause_duration
         self.log_input = log_input
+        self.stuff_mode = stuff_mode
 
     def _pause(self, duration=None):
         time.sleep(self.pause_duration if duration is None else duration)
+
+    def _prepare_stuff(self, line):
+        if self.stuff_mode == 'auto' and line[-1] != "\n":
+            line += "\n"
+        return line
 
     def run_test_case(self, input_file: Optional[str], expected_file: str):
         tid = threading.current_thread().ident
@@ -114,7 +120,8 @@ class TestCaseRunner(object):
                 screenlog = os.path.join(tempdir, 'screenlog.0')
                 for i, line in enumerate(input_lines):
                     self._pause()
-                    if self.log_input: _log.debug("[%s] feeding line %s to process: %s", tid, i+1, line.strip())
+                    line = self._prepare_stuff(line)
+                    if self.log_input: _log.debug("[%s] feeding line %s to process: %s", tid, i+1, repr(line))
                     proc = subprocess.run(['screen', '-S', case_id, '-X', 'stuff', line], stdout=PIPE, stderr=PIPE)  # note: important that line has terminal newline char
                     if proc.returncode != 0:
                         stdout, stderr = proc.stdout.decode('utf8'), proc.stderr.decode('utf8')
@@ -123,7 +130,7 @@ class TestCaseRunner(object):
                         return outcome(False, read_file_text(screenlog, True), msg)
                 completed = True
             finally:
-                self._pause()
+                self._pause()  ## allow process to exit cleanly
                 exitcode = subprocess.call(['screen', '-S', case_id, '-X', 'quit'], stdout=DEVNULL, stderr=DEVNULL)  # ok if failed; probably already terminated
                 if not completed and exitcode != 0:
                     _log.warning("screen 'quit' failed with code %s", exitcode)
@@ -196,7 +203,8 @@ def matches(filter_pattern: Optional[str], test_case: Tuple[Optional[str], str])
     return fnmatch.fnmatch(filename, filter_pattern)
 
 
-def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_test_cases:int, log_input: bool, filter_pattern: str, report_type: str):
+def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_test_cases:int, log_input: bool, 
+              filter_pattern: str, report_type: str, stuff_mode: str):
     q_dir = os.path.dirname(cpp_file)
     q_name = os.path.basename(q_dir)
     q_executable = os.path.join(q_dir, 'cmake-build', q_name)
@@ -205,7 +213,7 @@ def check_cpp(cpp_file: str, concurrency_level: int, pause_duration: float, max_
     _log.info("%s: detected %s test cases", q_name, len(test_case_files))
     if not test_case_files:
         return
-    runner = TestCaseRunner(q_executable, pause_duration, log_input)
+    runner = TestCaseRunner(q_executable, pause_duration, log_input, stuff_mode)
     outcomes = {}
     threads: List[threading.Thread] = []
     concurrency_mgr = ConcurrencyManager(runner, concurrency_level, q_name, outcomes)
@@ -238,6 +246,7 @@ def main():
     parser.add_argument("--log-input", help="log feeding of input lines at DEBUG level")
     parser.add_argument("--filter", metavar="PATTERN", help="match test case input filenames against PATTERN")
     parser.add_argument("--report", metavar="ACTION", choices=('diff', 'full', 'repr', 'none'), default='diff', help="what to print on test case failure")
+    parser.add_argument("--stuff", metavar="MODE", choices=('auto', 'strict'), default='auto', help="how to interpret input lines sent to process via `screen -X stuff`: 'auto' or 'strict'")
     args = parser.parse_args()
     logging.basicConfig(level=logging.__dict__[args.log_level])
     this_file = os.path.abspath(__file__)
@@ -262,7 +271,7 @@ def main():
         _log.error("no main.cpp files found")
         return 1
     for i, cpp_file in enumerate(sorted(main_cpps)):
-        check_cpp(cpp_file, args.threads, args.pause, args.max_cases, args.log_input, args.filter, args.report)
+        check_cpp(cpp_file, args.threads, args.pause, args.max_cases, args.log_input, args.filter, args.report, args.stuff)
     return 0
 
 
