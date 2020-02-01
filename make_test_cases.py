@@ -138,12 +138,21 @@ def write_cases(param_source: ParameterSource, dest_dir: str, suffix=".txt"):
             continue
     _log.debug("%s of %s test cases generated in %s", nsuccesses, len(param_source.test_cases), dest_dir) 
 
+
+def is_skel_file(pathname, proj_dir):
+    pathname = os.path.normpath(os.path.abspath(pathname))
+    skel_dir = os.path.normpath(os.path.join(os.path.abspath(proj_dir), 'skel'))
+    return pathname.startswith(skel_dir)
+
+
 def find_all_definitions_files(top_dir: str, filename: str) -> List[str]:
     defs_files = []
     for root, dirs, files in os.walk(top_dir):
         for f in files:
             if f == filename:
-                defs_files.append(os.path.join(root, f))
+                pathname = os.path.join(root, f)
+                if not is_skel_file(pathname, top_dir):
+                    defs_files.append(pathname)
     return defs_files
 
 
