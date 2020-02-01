@@ -1,11 +1,21 @@
 {
-  "input": "{nombre}\n",
-  "input_file": "input-template.txt",
-  "expected": "Enter your name: {nombre}\nhello, {nombre}\n",
-  "expected_file": "expected-template.txt",
-  "param_names": ["nombre"],
+  "input": "{decimal}\n",
+  "expected": "Enter decimal number:\n{decimal}\nThe binary representation of {decimal} is {binary}\n",
+  "param_names": ["decimal", "binary"],
   "test_cases": [
-    "jane",
-    "julia"
+    [76, "1001100"],
+    [1, "1"],
+    [2, "10"],
+    [3, "11"],
+    [4, "100"],
+    [0, "0"],
+    [255, "11111111"],
+    [256, "100000000"],
+    [966, "1111000110"],
+    [1992, "11111001000"],
+    [211085, "110011100010001101"],
+    [32861, "1000000001011101"],
+    [797, "1100011101"],
+    [7655345, "11101001100111110110001"]
   ]
 }
