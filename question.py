@@ -37,6 +37,20 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable({q_name} main.cpp)
 """
 
+_MAINCPP_TEMPLATE = """\
+// Question {n}
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "{q_name} executed" << endl;
+    return 0;
+}
+"""
+
 def detect_next_qname(proj_dir):
     child_dirs = []
     for root, dirs, _ in os.walk(proj_dir):
@@ -64,6 +78,7 @@ def _render(template: str, q_name: str, output_file: str):
     with open(output_file, 'w') as ofile:
         ofile.write(template.format(**model))
 
+
 def populate(proj_dir, q_dir):
     q_name = os.path.basename(q_dir)
     skel_dir = os.path.join(proj_dir, 'skel')
@@ -72,6 +87,7 @@ def populate(proj_dir, q_dir):
     q_cmakelists_file = os.path.join(q_dir, 'CMakeLists.txt')
     _render(_CMAKELISTSTXT_TEMPLATE, q_name, q_cmakelists_file)
     _render(_QUESTIONMD_TEMPLATE, q_name, os.path.join(q_dir, 'question.md'))
+    _render(_MAINCPP_TEMPLATE, q_name, os.path.join(q_dir, 'main.cpp'))
     _log.debug("generated question.md and CMakeLists.txt")
 
 
