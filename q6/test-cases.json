@@ -1,0 +1,16 @@
+{
+  "input": "{n}\n",
+  "expected": "Enter a positive integer: {n]\n{evenest}\n",
+  "param_names": ["n", "evenest"],
+  "test_cases": [
+    [30, "2\n4\n6\n8\n20\n22\n24\n26\n28"],
+    [0, ""],
+    [1, ""],
+    [2, "2"],
+    [3, "2"],
+    [4, "2\n4"],
+    [10, "2\n4\n6\n8"],
+    [27, "2\n4\n6\n8\n20\n22\n24\n26"],
+    [64, "2\n4\n6\n8\n20\n22\n24\n26\n28\n40\n42\n44\n46\n48\n60\n62\n64"]
+  ]
+}
