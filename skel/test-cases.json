@@ -5,7 +5,7 @@
   "expected_file": "expected-template.txt",
   "param_names": ["nombre"],
   "test_cases": [
-    "jane",
-    "julia"
+    ["jane"],
+    ["julia"]
   ]
 }
