@@ -1,5 +1,9 @@
+// mac937@nyu.edu
+// Tandon CS Bridge Winter 2020
+// Week 4
 // Question 3
-// Behavior for negative integers is undefined
+// Program that converts decimal to binary
+// Note: behavior for negative integer inputs is undefined
 
 #include <iostream>
 

@@ -1,4 +1,8 @@
-// Question...
+// mac937@nyu.edu
+// Tandon CS Bridge Winter 2020
+// Week 4
+// Question 2
+// Program that prints simplified Roman numerals
 
 #include <iostream>
 

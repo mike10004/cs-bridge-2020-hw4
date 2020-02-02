@@ -1,4 +1,8 @@
+// mac937@nyu.edu
+// Tandon CS Bridge Winter 2020
+// Week 4
 // Question 4
+// Program that prints the geometric mean of a sequence of positive integers
 
 #include <iostream>
 #include <cmath>
