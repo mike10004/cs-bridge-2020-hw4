@@ -15,25 +15,21 @@ int main()
     cout << "Enter decimal number:\n";
     cin >> decimal;
 
-    int numBinaryDigits = 0;
-    int intPart = decimal;
-    do {
-        intPart /= 2;
-        numBinaryDigits++;
-    } while (intPart > 0);
-
+    // Find the greatest power of 2 strictly less than the input number
+    int powerOf2 = 1;
+    while ((powerOf2 * 2) <= decimal) {
+        powerOf2 *= 2;
+    }
+    
     cout << "The binary representation of " << decimal << " is ";
-    for (int exponent = numBinaryDigits - 1; exponent >= 0; exponent--) {
-        int powerOf2 = 1;
-        for (int i = 0; i < exponent; i++) {
-            powerOf2 *= 2;
-        }
+    while (powerOf2 > 0) {
         if (decimal >= powerOf2) {
             cout << '1';
             decimal -= powerOf2;
         } else {
             cout << '0';
         }
+        powerOf2 /= 2;
     }
     cout << endl;
     return 0;
