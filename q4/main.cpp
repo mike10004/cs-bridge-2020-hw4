@@ -13,8 +13,7 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
     // Section (a)
     {
         int sequenceLength, sequenceElement;

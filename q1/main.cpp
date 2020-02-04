@@ -8,23 +8,20 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
     int numEvenNumbersToPrint;
     cout << "Please enter a positive integer: ";
     cin >> numEvenNumbersToPrint;
 
     cout << "section a" << endl;
     int printedNumberCount = 0;
-    while (printedNumberCount < numEvenNumbersToPrint)
-    {
+    while (printedNumberCount < numEvenNumbersToPrint) {
         cout << (2 * (printedNumberCount + 1)) << endl;
         printedNumberCount++;
     }
 
     cout << "section b" << endl;
-    for (int i = 0; i < numEvenNumbersToPrint; i++)
-    {
+    for (int i = 0; i < numEvenNumbersToPrint; i++) {
         cout << (2 * (i + 1)) << endl;
     }
 

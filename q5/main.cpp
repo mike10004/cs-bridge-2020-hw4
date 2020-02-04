@@ -8,8 +8,7 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
     int hourglassHalfHeight;
     cout << "Enter a positive integer: ";
     cin >> hourglassHalfHeight;

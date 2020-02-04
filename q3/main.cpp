@@ -9,8 +9,7 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
     int decimal;
     cout << "Enter decimal number:\n";
     cin >> decimal;

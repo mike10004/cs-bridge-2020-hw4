@@ -16,8 +16,7 @@ const int VAL_X = 10;
 const int VAL_V = 5;
 const int VAL_I = 1;
 
-int main()
-{
+int main() {
     int decimal;
     cout << "Enter decimal number:\n";
     cin >> decimal;

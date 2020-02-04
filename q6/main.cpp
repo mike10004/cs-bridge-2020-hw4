@@ -10,8 +10,7 @@ using namespace std;
 
 int DECIMAL_BASE = 10;
 
-int main()
-{
+int main() {
     int positiveInt;
     cout << "Enter a positive integer: ";   
     cin >> positiveInt;
