@@ -26,13 +26,32 @@ if [ -z "$PREFIX" ] ; then
   exit 1
 fi 
 
+CREATED=""
+
 for QDIR in ./q*
 do
   [[ -e "$QDIR" ]] || break   # in case of no q* directories
+  if [ -f "$QDIR" ] ; then
+    continue
+  fi
+  if [ ! -d "$QDIR" ] ; then
+    echo "not a directory: $QDIR" >&2
+    continue
+  fi
   CPP_FILE="$QDIR/main.cpp"
+  if [ ! -f "$CPP_FILE" ] ; then
+    echo "file not found: $CPP_FILE" >&2
+    continue
+  fi
   QBASE="$(basename "$QDIR")"
   DST="${OUTPUT_DIR}/${PREFIX}${QBASE}.cpp"
   mkdir -p "$(dirname "$DST")"
-  cp -v "$CPP_FILE" "$DST"
+  grep -v '// prepare:' "$CPP_FILE" > "$DST"
+  echo "prepare: $CPP_FILE -> $DST" >&2
+  CREATED="$CREATED $DST"
 done
 
+if [ -z "$CREATED" ] ; then
+  echo "prepare.sh: zero files copied" >&2
+  exit 2
+fi
