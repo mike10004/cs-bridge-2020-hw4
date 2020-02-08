@@ -1,7 +1,0 @@
-Please enter a positive integer: 2
-section a
-2
-4
-section b
-2
-4
