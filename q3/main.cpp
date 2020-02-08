@@ -14,7 +14,7 @@ int main() {
     cout << "Enter decimal number:\n";
     cin >> decimal;
 
-    // Find the greatest power of 2 strictly less than the input number
+    // Find the greatest power of 2 less than or equal to the input number
     int powerOf2 = 1;
     while ((powerOf2 * 2) <= decimal) {
         powerOf2 *= 2;
