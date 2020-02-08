@@ -2,3 +2,4 @@ cmake-build*/
 .idea/
 /stage
 __pycache__/
+test-cases/
